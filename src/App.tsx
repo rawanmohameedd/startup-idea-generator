@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import './App.css'; // Make sure to create this file with the styles
 
 function App() {
   const [industry, setIndustry] = useState('');
@@ -59,16 +60,17 @@ function App() {
   };
 
   return (
-    <div >
-      <h1>💡 Startup Idea Generator</h1>
+    <div className="app-container">
+      <h1 className="app-title">💡 Startup Idea Generator</h1>
       
-      <div>
+      <div className="generator-container">
         
         <input
           type="text"
           placeholder="Industry (e.g., Food)"
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
+          className="input-field"
         />
         
         <input
@@ -76,24 +78,26 @@ function App() {
           placeholder="Trend (e.g., AI)"
           value={trend}
           onChange={(e) => setTrend(e.target.value)}
+          className="input-field"
         />
         
         <button
           onClick={generateIdea}
           disabled={loading}
+          className="generate-button"
         >
           {loading ? 'Generating...' : 'Generate Idea 🚀'}
         </button>
         
         {error && (
-          <div >
+          <div className="error-message">
             {error}
           </div>
         )}
         
         {idea && (
-          <div >
-            <pre >{idea}</pre>
+          <div className="idea-container">
+            <pre className="idea-text">{idea}</pre>
           </div>
         )}
       </div>

@@ -39,8 +39,16 @@ body {
   text-align: center;
   color: var(--primary-color);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px; 
 }
 
+.app-logo {
+  width: 100px; 
+  height: auto;
+  margin-bottom: 0; 
+}
 .generator-container {
   background-color: var(--card-bg-color);
   border-radius: 12px;

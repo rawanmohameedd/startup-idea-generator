@@ -59,7 +59,14 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1 className="app-title">💡 Startup Idea Generator</h1>
+      <h1 className="app-title">
+        <img
+          src="/image-removebg-preview (2).png"
+          alt="Logo"
+          className="app-logo"
+        />
+        <span>Startup Idea Generator</span>
+      </h1>
 
       <div className="generator-container">
         <input

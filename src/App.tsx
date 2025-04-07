@@ -109,15 +109,19 @@ function App() {
 
         {idea && (
           <div className="idea-container">
-            <p className="reveal-text word-reveal">
-              {idea.split(' ').map((word, index) => (
-                <span
-                  key={index}
-                  style={{ animationDelay: `${index * 0.07}s` }}>
-                  {word}
-                </span>
-              ))}
-            </p>
+            {idea.split('\n').map((line, i) => (
+              <p
+                key={i}
+                className={`idea-line word-reveal ${i === 0 ? 'startup-name' : 'startup-pitch'}`}>
+                {line.split(' ').map((word, index) => (
+                  <span
+                    key={index}
+                    style={{ animationDelay: `${index * 0.07}s` }}>
+                    {word}
+                  </span>
+                ))}
+              </p>
+            ))}
           </div>
         )}
       </div>

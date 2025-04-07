@@ -130,6 +130,32 @@ body {
   }
 }
 
+.idea-line {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.idea-line span {
+  opacity: 0;
+  transform: translateY(50px);
+  display: inline-block;
+  animation: revealWord 0.5s ease-out forwards;
+  margin-right: 0.3em;
+}
+
+.startup-name {
+  font-weight: bold;
+  color: #0ea5e9;
+}
+
+.startup-pitch {
+  font-weight: normal;
+  color: #334155;
+}
+
 /* Loader Styles */
 @keyframes animate {
   0% {

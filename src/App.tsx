@@ -32,12 +32,12 @@ function App() {
           model: 'llama3-8b-8192',
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.7,
-          max_tokens: 250
+          max_tokens: 250,
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         }
       );
@@ -81,15 +81,16 @@ function App() {
         <button
           onClick={generateIdea}
           disabled={loading}
-          className="generate-button"
-        >
+          className="generate-button">
           {loading ? (
             <div className="loader-container2">
               <div className="loader loader1">
-                <i></i><span></span>
+                <i></i>
+                <span></span>
               </div>
               <div className="loader loader2">
-                <i></i><span></span>
+                <i></i>
+                <span></span>
               </div>
             </div>
           ) : (
@@ -97,15 +98,19 @@ function App() {
           )}
         </button>
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         {idea && (
-          <div key={idea} className="idea-container">
-            <pre className="idea-text">{idea}</pre>
+          <div className="idea-container">
+            <p className="reveal-text word-reveal">
+              {idea.split(' ').map((word, index) => (
+                <span
+                  key={index}
+                  style={{ animationDelay: `${index * 0.07}s` }}>
+                  {word}
+                </span>
+              ))}
+            </p>
           </div>
         )}
       </div>

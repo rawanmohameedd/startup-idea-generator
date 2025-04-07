@@ -1,35 +1,104 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [industry, setIndustry] = useState('');
+  const [trend, setTrend] = useState('');
+  const [idea, setIdea] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const generateIdea = async () => {
+    setLoading(true);
+    setError('');
+    setIdea('');
+    
+    try {
+      // Make sure industry and trend are not empty
+      if (!industry.trim() || !trend.trim()) {
+        throw new Error('Please enter both industry and trend');
+      }
+      
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+      if (!apiKey) {
+        throw new Error('Groq API key is missing. Please check your environment variables.');
+      }
+      
+      const prompt = `Give me a unique startup idea in the ${industry} industry that uses ${trend}. Return it in this format: "Startup Name: ..., One-liner Pitch: ...".`;
+      
+      const res = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: 'llama3-8b-8192', // Groq-optimized model
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+          max_tokens: 250
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          },
+        }
+      );
+      
+      const reply = res.data.choices[0].message.content;
+      setIdea(reply);
+    } catch (err: unknown) {
+      console.error('Error details:', err);
+      
+      // Provide specific error messages for Groq API issues
+      if (axios.isAxiosError(err) && err.response && err.response.status === 429) {
+        setError('Rate limit exceeded. Please try again later.');
+      } else{
+        setError('Something went wrong. Try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
+    <div >
+      <h1>💡 Startup Idea Generator</h1>
+      
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        
+        <input
+          type="text"
+          placeholder="Industry (e.g., Food)"
+          value={industry}
+          onChange={(e) => setIndustry(e.target.value)}
+        />
+        
+        <input
+          type="text"
+          placeholder="Trend (e.g., AI)"
+          value={trend}
+          onChange={(e) => setTrend(e.target.value)}
+        />
+        
+        <button
+          onClick={generateIdea}
+          disabled={loading}
+        >
+          {loading ? 'Generating...' : 'Generate Idea 🚀'}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        
+        {error && (
+          <div >
+            {error}
+          </div>
+        )}
+        
+        {idea && (
+          <div >
+            <pre >{idea}</pre>
+          </div>
+        )}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

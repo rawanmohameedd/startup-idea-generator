@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import './App.css'; // Make sure to create this file with the styles
+import './App.css';
 
 function App() {
   const [industry, setIndustry] = useState('');
@@ -13,24 +13,23 @@ function App() {
     setLoading(true);
     setError('');
     setIdea('');
-    
+
     try {
-      // Make sure industry and trend are not empty
       if (!industry.trim() || !trend.trim()) {
         throw new Error('Please enter both industry and trend');
       }
-      
+
       const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       if (!apiKey) {
         throw new Error('Groq API key is missing. Please check your environment variables.');
       }
-      
+
       const prompt = `Give me a unique startup idea in the ${industry} industry that uses ${trend}. Return it in this format: "Startup Name: ..., One-liner Pitch: ...".`;
-      
+
       const res = await axios.post(
         'https://api.groq.com/openai/v1/chat/completions',
         {
-          model: 'llama3-8b-8192', // Groq-optimized model
+          model: 'llama3-8b-8192',
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.7,
           max_tokens: 250
@@ -38,20 +37,19 @@ function App() {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+            'Authorization': `Bearer ${apiKey}`,
           },
         }
       );
-      
+
       const reply = res.data.choices[0].message.content;
       setIdea(reply);
     } catch (err: unknown) {
       console.error('Error details:', err);
-      
-      // Provide specific error messages for Groq API issues
+
       if (axios.isAxiosError(err) && err.response && err.response.status === 429) {
         setError('Rate limit exceeded. Please try again later.');
-      } else{
+      } else {
         setError('Something went wrong. Try again.');
       }
     } finally {
@@ -62,9 +60,8 @@ function App() {
   return (
     <div className="app-container">
       <h1 className="app-title">💡 Startup Idea Generator</h1>
-      
+
       <div className="generator-container">
-        
         <input
           type="text"
           placeholder="Industry (e.g., Food)"
@@ -72,7 +69,7 @@ function App() {
           onChange={(e) => setIndustry(e.target.value)}
           className="input-field"
         />
-        
+
         <input
           type="text"
           placeholder="Trend (e.g., AI)"
@@ -80,23 +77,34 @@ function App() {
           onChange={(e) => setTrend(e.target.value)}
           className="input-field"
         />
-        
+
         <button
           onClick={generateIdea}
           disabled={loading}
           className="generate-button"
         >
-          {loading ? 'Generating...' : 'Generate Idea 🚀'}
+          {loading ? (
+            <div className="loader-container2">
+              <div className="loader loader1">
+                <i></i><span></span>
+              </div>
+              <div className="loader loader2">
+                <i></i><span></span>
+              </div>
+            </div>
+          ) : (
+            'Generate Idea 🚀'
+          )}
         </button>
-        
+
         {error && (
           <div className="error-message">
             {error}
           </div>
         )}
-        
+
         {idea && (
-          <div className="idea-container">
+          <div key={idea} className="idea-container">
             <pre className="idea-text">{idea}</pre>
           </div>
         )}
